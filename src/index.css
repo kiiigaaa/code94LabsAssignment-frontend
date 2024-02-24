@@ -8,13 +8,11 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   /* font-family: 'Montserrat', sans-serif !important; */
-  background-image: url('https://img.freepik.com/free-vector/ecommerce-web-store-hand-drawn-illustration_107791-10966.jpg?w=1060&t=st=1708715598~exp=1708716198~hmac=b67b49f5d14dbb607aed583ab267f365a2db223aa2827e3e41e6b5b39e7974fe') !important;
 
-  /* background: rgba(255, 255, 255, 0.23);
-  backdrop-filter: blur(8.4px); */
+  background: rgba(160, 231, 244, 0.32) !important;
+ /* backdrop-filter: blur(8.4px); */
 
 }
-
 
 
 /* code {
@@ -54,6 +52,10 @@ h1 {
   background: 'none'!important;
   border: 'none'!important;
   font-size: '30px';
+}
+
+.col-md-9{
+  font-size: 25px;
 }
 
 .favorite{

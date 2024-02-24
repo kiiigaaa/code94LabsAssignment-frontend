@@ -4,7 +4,6 @@ import DataTable from "react-data-table-component";
 import { Modal } from 'react-bootstrap';
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from 'react-redux';
-// import { addToCart } from "../actions/cartAction";
 import { updateItemsAction, addItemsAction, deleteItemsAction } from '../actions/itemAction';
 import star from '../assets/star.svg'
 import starred from '../assets/starred.svg'
@@ -41,6 +40,7 @@ export default function Cataloguescreen() {
 
   }, []);
 
+  //old search
   useEffect(() => {
     const results = catalogues.filter(catalogue => {
       if (filterType === "isFavourite") {
@@ -63,6 +63,8 @@ export default function Cataloguescreen() {
     setProductImages(files);
   };
 
+
+  //get current item for edit/delete
   function getCurrentItem(itemId) {
 
     axios.get(`/api/items/getcurrentitem/${itemId}`).then((res) => {
@@ -78,6 +80,7 @@ export default function Cataloguescreen() {
     })
   }
 
+  //adding favourites
   const toggleFavorite = (itemId) => {
     const updatedFavorites = favorites.includes(itemId)
       ? favorites.filter(id => id !== itemId)
@@ -96,6 +99,10 @@ export default function Cataloguescreen() {
       .catch(error => {
         console.error('Error updating favorites on the backend:', error);
       });
+
+    setTimeout(function () {
+      window.location.reload('/');
+    }, 1500);
   };
 
   // UseEffect to load favorites from local storage
@@ -105,9 +112,9 @@ export default function Cataloguescreen() {
   }, []);
 
 
-
+  //columnt in the data table
   const columnsOrders = [
-   
+
     {
       name: "SKU",
       selector: (row) => row.SKU,
@@ -148,7 +155,7 @@ export default function Cataloguescreen() {
           </button>
 
         </div>
-      ),
+      )
     },
 
   ];
@@ -176,12 +183,12 @@ export default function Cataloguescreen() {
 
 
     const formData = new FormData();
-    formData.append('name',name);
-    formData.append('price',price);
-    formData.append('description',description);
+    formData.append('name', name);
+    formData.append('price', price);
+    formData.append('description', description);
     formData.append('thumbnail', thumbnailIndex);
-    formData.append('SKU',SKU);
-    formData.append('QTY',QTY);
+    formData.append('SKU', SKU);
+    formData.append('QTY', QTY);
 
     for (let i = 0; i < image.length; i++) {
       formData.append('productImages', image[i]);
@@ -193,7 +200,6 @@ export default function Cataloguescreen() {
   //add new items
 
   const [newName, setitemName] = useState('');
-  const [newImage, setitemImage] = useState('');
   const [newDescription, setitemDescription] = useState('');
   const [newPrices, setitemPrices] = useState('');
   const [newSKU, setSKU] = useState('');
@@ -206,13 +212,13 @@ export default function Cataloguescreen() {
     formData.append('newDescription', newDescription);
     formData.append('thumbnail', thumbnailIndex);
     formData.append('sku', newSKU);
-    formData.append('newQty',quantity);
+    formData.append('newQty', quantity);
 
     for (let i = 0; i < images.length; i++) {
       formData.append('productImages', images[i]);
     }
 
-    console.log(newPrices,newSKU)
+    console.log(newPrices, newSKU)
 
     dispatch(addItemsAction(formData));
   }
@@ -222,11 +228,11 @@ export default function Cataloguescreen() {
 
     if (window.confirm('Do you want to delete?')) {
 
-    dispatch(deleteItemsAction(itemId));
-  }
+      dispatch(deleteItemsAction(itemId));
+    }
 
   }
-  
+
 
   const [images, setImages] = useState([]);
   const [thumbnailIndex, setThumbnailIndex] = useState(null);
@@ -269,6 +275,13 @@ export default function Cataloguescreen() {
     setShowOnlyFavorites(!showOnlyFavorites);
   };
 
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const handleSearch = () => {
+    // Redirect to the results page with the search term as a query parameter
+    window.location.href = `/results?search=${searchTerm}`;
+  };
+
 
 
   return (
@@ -299,15 +312,15 @@ export default function Cataloguescreen() {
                   type="text"
                   placeholder="Search Items..."
                   className='w-100 form-control mr-2'
-                  value={searchCatalogues}
-                  onChange={(e) => setSearchCatalogues(e.target.value)}
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                 />
-
+                <button className='btn' onClick={handleSearch} style={{ marginTop: '7px' }}>Search</button>
                 <img
                   className="p-2"
                   src={showOnlyFavorites ? starred : star}
                   alt="Toggle Favorites"
-                  style={{ cursor: 'pointer', backgroundColor: 'white', border: 'white',border: '1px solid #001EB9',borderRadius: '20%',padding:'3px',marginLeft:'20px',marginTop:"7px" }}
+                  style={{ cursor: 'pointer', backgroundColor: 'white', border: 'white', border: '1px solid #001EB9', borderRadius: '20%', padding: '3px', marginLeft: '20px', marginTop: "7px" }}
                   onClick={toggleShowOnlyFavorites}
                 />
 
@@ -377,11 +390,11 @@ export default function Cataloguescreen() {
                       <br></br>
 
                       <div class="form-group">
-                        <label htmlFor="foodDescription" style={{ display: 'block', marginBottom: '10px' }}><h9 style={{ fontSize: "15px", color: 'black' }}>Food Description</h9></label>
+                        <label htmlFor="itemDescription" style={{ display: 'block', marginBottom: '10px' }}><h9 style={{ fontSize: "15px", color: 'black' }}>Item Description</h9></label>
 
                         <textarea
                           class="form-control"
-                          id="foodDescription"
+                          id="itemDescription"
                           rows="15"
                           placeholder='Enter Description'
                           value={description}
@@ -420,18 +433,18 @@ export default function Cataloguescreen() {
 
                   <div class="col order-first">
 
-                  <div className="form-group">
-                        <label htmlFor="itemSKU"><h9 style={{ fontSize: "15px", color: 'black' }}>SKU</h9></label>
-                        <input
-                          type="text"
-                          id="itemSKU"
-                          placeholder='Enter Item Name'
-                          className="form-control"
-                          value={SKU}
-                          onChange={(e) => { updateSKU(e.target.value) }}
-                          style={{ fontFamily: 'Mukta, calibri', color: "black", fontStyle: "italic", fontSize: "15px" }}
-                        />
-                      </div>
+                    <div className="form-group">
+                      <label htmlFor="itemSKU"><h9 style={{ fontSize: "15px", color: 'black' }}>SKU</h9></label>
+                      <input
+                        type="text"
+                        id="itemSKU"
+                        placeholder='Enter Item Name'
+                        className="form-control"
+                        value={SKU}
+                        onChange={(e) => { updateSKU(e.target.value) }}
+                        style={{ fontFamily: 'Mukta, calibri', color: "black", fontStyle: "italic", fontSize: "15px" }}
+                      />
+                    </div>
 
 
                     <div className='row justify-content center'>
@@ -450,7 +463,7 @@ export default function Cataloguescreen() {
                           <br></br>
                           {displaiImg.map((image, index) => (
                             <div key={index} className="col">
-                              <img src={image} width={150} height={150} alt={`Image ${index + 1}`} style={{  marginBottom: '10px', paddingTop:'20px' }} />
+                              <img src={image} width={150} height={150} alt={`Image ${index + 1}`} style={{ marginBottom: '10px', paddingTop: '20px' }} />
                               {/* Add a button to select as thumbnail */}
                               <button onClick={() => handleThumbnailSelect(index)} className="btn btn-primary">
                                 {thumbnailIndex === index ? 'Thumbnail Selected' : 'Select as Thumbnail'}
@@ -533,11 +546,11 @@ export default function Cataloguescreen() {
                       <br></br>
 
                       <div class="form-group">
-                        <label htmlFor="foodDescription" style={{ display: 'block', marginBottom: '10px' }}><h9 style={{ fontSize: "15px", color: 'black' }}>Food Description</h9></label>
+                        <label htmlFor="itemDescription" style={{ display: 'block', marginBottom: '10px' }}><h9 style={{ fontSize: "15px", color: 'black' }}>Item Description</h9></label>
 
                         <textarea
                           class="form-control"
-                          id="foodDescription"
+                          id="itemDescription"
                           rows="15"
                           placeholder='Enter Description'
                           value={newDescription}
@@ -573,34 +586,34 @@ export default function Cataloguescreen() {
 
                     <div className="flex-container">
 
-                        <div className='w-100 m-1'>
-                          <p>Quantity</p>
-                          <select className='form-control' value={quantity} onChange={(e) => { setquantity(e.target.value) }}>
-                            {Array(10).keys() && [...Array(10).keys()].map((x, i) => {
-                              return <option value={i + 1}>{i + 1}</option>
-                            })}
-                          </select>
-                        </div>
-
+                      <div className='w-100 m-1'>
+                        <p>Quantity</p>
+                        <select className='form-control' value={quantity} onChange={(e) => { setquantity(e.target.value) }}>
+                          {Array(10).keys() && [...Array(10).keys()].map((x, i) => {
+                            return <option value={i + 1}>{i + 1}</option>
+                          })}
+                        </select>
                       </div>
+
+                    </div>
 
                   </div>
 
 
                   <div class="col order-first">
 
-                  <div className="form-group">
-                        <label htmlFor="itemSKU"><h9 style={{ fontSize: "15px", color: 'black' }}>SKU</h9></label>
-                        <input
-                          type="text"
-                          id="itemSKU"
-                          placeholder='Enter Item Name'
-                          className="form-control"
-                          value={newSKU}
-                          onChange={(e) => { setSKU(e.target.value) }}
-                          style={{ fontFamily: 'Mukta, calibri', color: "black", fontStyle: "italic", fontSize: "15px" }}
-                        />
-                      </div>
+                    <div className="form-group">
+                      <label htmlFor="itemSKU"><h9 style={{ fontSize: "15px", color: 'black' }}>SKU</h9></label>
+                      <input
+                        type="text"
+                        id="itemSKU"
+                        placeholder='Enter Item Name'
+                        className="form-control"
+                        value={newSKU}
+                        onChange={(e) => { setSKU(e.target.value) }}
+                        style={{ fontFamily: 'Mukta, calibri', color: "black", fontStyle: "italic", fontSize: "15px" }}
+                      />
+                    </div>
 
 
                     <div className='row justify-content center'>
@@ -619,7 +632,7 @@ export default function Cataloguescreen() {
                           <br></br>
                           {displaiImg.map((image, index) => (
                             <div key={index} className="col">
-                              <img src={image} width={150} height={150} alt={`Image ${index + 1}`} style={{  marginBottom: '10px', paddingTop:'20px' }} />
+                              <img src={image} width={150} height={150} alt={`Image ${index + 1}`} style={{ marginBottom: '10px', paddingTop: '20px' }} />
                               {/* Add a button to select as thumbnail */}
                               <button onClick={() => handleThumbnailSelect(index)} className="btn btn-primary">
                                 {thumbnailIndex === index ? 'Thumbnail Selected' : 'Select as Thumbnail'}

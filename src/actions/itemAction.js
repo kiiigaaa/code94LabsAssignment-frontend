@@ -56,7 +56,7 @@ export const addItemsAction = (formData) => async dispatch => {
 
         Toast.fire({
             icon: 'error',
-            title: 'Item added unsuccessfully!'
+            title: 'Item add falied!'
         })
         dispatch({ type: 'ITEM_ADDED_FAILED', payload: error })
     }
@@ -64,18 +64,18 @@ export const addItemsAction = (formData) => async dispatch => {
 
 export const getAllitems = () => async dispatch => {
 
-    dispatch({ type: 'GET_itemS_REQUEST' })
+    dispatch({ type: 'GET_ITEMS_REQUEST' })
 
 
     try {
 
         const response = await axios.get('/api/items/getallitems')
         console.log(response)
-        dispatch({ type: 'GET_itemS_SUCCESS', payload : response.data })
+        dispatch({ type: 'GET_ITEMS_SUCCESS', payload : response.data })
 
     } catch (error) {
 
-        dispatch({ type: 'GET_itemS_FAILED', payload : error })
+        dispatch({ type: 'GET_ITEMS_FAILED', payload : error })
     }
     
 
@@ -132,7 +132,7 @@ export const updateItemsAction = (formData, id) => async dispatch => {
 
         Toast.fire({
             icon: 'error',
-            title: 'Items updated unsuccessfully!'
+            title: 'Items update failed!'
         })
         dispatch({ type: 'UPDATE_ITEMS_FAILED', payload: error })
     }
